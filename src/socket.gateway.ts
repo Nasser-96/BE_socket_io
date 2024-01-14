@@ -12,9 +12,10 @@ import {
   } from '@nestjs/websockets';
   import { Namespace, Socket } from 'socket.io';
 import { AppService } from './app.service';
+import ReturnResponse from './helper/returnResponse';
   
-  @WebSocketGateway({cors:true})
-  export class AppGateway
+  @WebSocketGateway({cors:true,namespace:"namespace"})
+  export class AppGateway implements OnGatewayInit,OnGatewayConnection,OnGatewayDisconnect
   {
     private readonly logger = new Logger(AppGateway.name);
     constructor(private readonly appService: AppService) {}
@@ -29,7 +30,6 @@ import { AppService } from './app.service';
     async handleConnection(client: Socket) 
     {
       this.logger.debug(`Socket connected with userID: ${client.id}`);
-      this.io.emit('Welcome To SocketIo', client.id)
       setTimeout(()=>
       {
         this.io.emit('messageFromServer', {data:"Welcome to SocketIo"})
@@ -43,7 +43,7 @@ import { AppService } from './app.service';
 
     @SubscribeMessage("message")
     handleMessage(@MessageBody() message:string)
-    {
-        this.logger.log(message);
+    { 
+        this.io.emit('messageToClient', ReturnResponse(message));
     }
   }
