@@ -1,7 +1,7 @@
 import { BadGatewayException, ConflictException, Injectable } from '@nestjs/common';
 import ReturnResponse from 'src/helper/returnResponse';
 import * as bcrypt from "bcryptjs"
-import * as jwt from 'jsonwebtoken'
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 interface SignupParams
@@ -19,7 +19,10 @@ interface LoginParams
 @Injectable()
 export class AuthService 
 {
-    constructor( private readonly prismaSirvce:PrismaService){}
+    constructor( 
+        private readonly prismaSirvce:PrismaService,
+        private jwtService: JwtService
+        ){}
 
     async signup({username,password}:SignupParams)
     {
@@ -52,13 +55,13 @@ export class AuthService
                 return ReturnResponse({user_token: token},'',"User Created Successfully")       
     }
 
-    private async generateJWT( name:string,id?:number )
+    private async generateJWT( username:string,id?:number )
     {
-        return jwt.sign(
+        return this.jwtService.signAsync(
             {
-                name:name,
+                username:username,
                 id:id
-            },process.env.JSON_TOKEN_KEY,{expiresIn:3600000})
+            })
     }
 
     async login({username,password}:LoginParams)

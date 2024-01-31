@@ -11,10 +11,10 @@ import {
     MessageBody,
   } from '@nestjs/websockets';
   import { Namespace, Socket } from 'socket.io';
-import { AppService } from './app.service';
-import ReturnResponse from './helper/returnResponse';
-import { NamespaceClass } from './classes/Namespace';
-import { Room } from './classes/Room';
+import { AppService } from '../app.service';
+import ReturnResponse from '../helper/returnResponse';
+import { NamespaceClass } from '../classes/Namespace';
+import { Room } from '../classes/Room';
   
   @WebSocketGateway({cors:true,namespace:"namespace"})
   export class AppGateway implements OnGatewayInit,OnGatewayConnection,OnGatewayDisconnect
