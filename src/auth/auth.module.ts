@@ -10,7 +10,6 @@ import { JwtModule } from '@nestjs/jwt';
     {
       global:true,
       secret:process.env.JSON_TOKEN_KEY,
-      signOptions:{expiresIn:'1000s'}
     })],
   providers: [AuthService],
   controllers: [AuthController]

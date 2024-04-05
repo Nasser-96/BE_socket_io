@@ -60,8 +60,8 @@ export class AuthService
         return this.jwtService.signAsync(
             {
                 username:username,
-                id:id
-            })
+                id:id,
+            },{expiresIn:"1000s",secret: process.env.JSON_TOKEN_KEY})
     }
 
     async login({username,password}:LoginParams)

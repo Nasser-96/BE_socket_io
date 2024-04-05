@@ -1,21 +1,23 @@
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppGateway } from './socket/socket.gateway';
-import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { JwtModule } from '@nestjs/jwt';
-import {ConfigModule} from "@nestjs/config"
-import { jwtModule } from './modules.config';
+import { SocketIOAdapter } from './socket/socket.adapter';
 
 @Module({
-  imports: [jwtModule,ConfigModule.forRoot() ,AuthModule, PrismaModule,
-    JwtModule.register(
-    {
-      global:true,
-      secret:process.env.JSON_TOKEN_KEY,
-      signOptions:{expiresIn:'10000s'}
-    })],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    PrismaModule,
+    JwtModule.register({
+      secret: process.env.JSON_TOKEN_KEY,
+      signOptions: { expiresIn: '1000s' },
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, AppGateway],
 })

@@ -3,8 +3,7 @@ import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import ReturnResponse from './helper/returnResponse';
 import { ValidationError } from 'class-validator';
-import { ConfigService } from '@nestjs/config';
-import { SocketIoAdapter } from './socket/socket.adpter';
+import { SocketIOAdapter } from './socket/socket.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe(
       {
-        whitelist:true, // What this do is delete any unwanted property
+        whitelist:true,
         transform:true,
         transformOptions:{enableImplicitConversion:true},
         exceptionFactory:(validationErrors:ValidationError[] = [])=>
@@ -28,9 +27,10 @@ async function bootstrap() {
       }
     )
   )
-  const configService = app.get(ConfigService);
 
-  app.useWebSocketAdapter(new SocketIoAdapter(app, configService));
+  const socketAdapter = new SocketIOAdapter(app); // Pass 
+  app.useWebSocketAdapter(socketAdapter);
   await app.listen(9000);
 }
+
 bootstrap();
