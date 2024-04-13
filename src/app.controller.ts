@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ReturnResponseType } from './helper/returnResponse';
 
@@ -11,9 +11,8 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  // @Post('ws')
-  // testWs()
-  // {
-  //   return this.appService.testWs()
-  // }
+  @Post('updateNamespaces')
+  testWs(@Body() payload: { message: string }) {
+    return this.appService.sendMessageToClients(payload);
+  }
 }

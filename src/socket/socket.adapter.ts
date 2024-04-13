@@ -3,24 +3,32 @@ import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
 import { SocketWithAuth } from 'src/types&enums/types';
+import { MyNameSpaces } from './socket.namespaces';
 
 export class SocketIOAdapter extends IoAdapter {
+  private server: Server | null = null;
   private readonly logger = new Logger(SocketIOAdapter.name);
+  private myNamespaces: MyNameSpaces;
   constructor(private app: INestApplicationContext) {
     super(app);
+    this.myNamespaces = new MyNameSpaces();
   }
 
-  createIOServer(port: number, options?: ServerOptions) {
-    const optionsWithCORS: ServerOptions = {
-      ...options,
-    };
+  createIOServer(port: number, options?: ServerOptions): any {
+    this.server = super.createIOServer(port, options);
 
     const jwtService = this.app.get(JwtService);
-    const server: Server = super.createIOServer(port, optionsWithCORS);
-    server.of('/chat').use(createTokenMiddleware(jwtService, this.logger));
-    server.of('/').use(createTokenMiddleware(jwtService, this.logger));
+    this.myNamespaces.getMyNameSpaces().forEach((namespace) => {
+      this.server
+        .of(namespace.endpoint)
+        .use(createTokenMiddleware(jwtService, this.logger));
+    });
+    this.server.of('/').use(createTokenMiddleware(jwtService, this.logger));
+    return this.server;
+  }
 
-    return server;
+  getIoInstance() {
+    return this.server;
   }
 }
 

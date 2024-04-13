@@ -10,26 +10,28 @@ async function bootstrap() {
 
   app.enableCors();
   app.useGlobalPipes(
-    new ValidationPipe(
-      {
-        whitelist:true,
-        transform:true,
-        transformOptions:{enableImplicitConversion:true},
-        exceptionFactory:(validationErrors:ValidationError[] = [])=>
-        {
-          throw new BadRequestException(ReturnResponse({},validationErrors?.map((error)=>
-          (
-            {
-              field:error?.property,
-              error:Object?.values(error?.constraints)?.join(', ')
-            })),""));
-        }
-      }
-    )
-  )
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+        throw new BadRequestException(
+          ReturnResponse(
+            {},
+            validationErrors?.map((error) => ({
+              field: error?.property,
+              error: Object?.values(error?.constraints)?.join(', '),
+            })),
+            '',
+          ),
+        );
+      },
+    }),
+  );
 
-  const socketAdapter = new SocketIOAdapter(app); // Pass 
+  const socketAdapter = new SocketIOAdapter(app);
   app.useWebSocketAdapter(socketAdapter);
+
   await app.listen(9000);
 }
 
