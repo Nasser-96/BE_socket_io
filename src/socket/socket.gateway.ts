@@ -110,8 +110,7 @@ export class AppGateway
       namespace: string;
       room: string;
       message: string;
-      is_server: boolean;
-    },
+    }
   ) {
     const sockets = await this.server
       .of(payload.namespace)
@@ -125,7 +124,6 @@ export class AppGateway
       }
     });
 
-    if (!payload.is_server) {
       this.myNamespaces.getMyNameSpaces().forEach((namespace) => {
         if (namespace.endpoint === payload.namespace) {
           namespace.rooms.forEach((room) => {
@@ -135,7 +133,6 @@ export class AppGateway
           });
         }
       });
-    }
     if (isInThisRoomAndNamespace) {
       this.server
         .of(payload.namespace)

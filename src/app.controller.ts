@@ -11,8 +11,8 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post('updateNamespaces')
-  testWs(@Body() payload: { message: string }) {
-    return this.appService.sendMessageToClients(payload);
+  @Get('getUsers')
+  getAllUsers() {
+    return this.appService.getAllUsers();
   }
 }
