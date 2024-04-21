@@ -24,6 +24,7 @@ export class SocketIOAdapter extends IoAdapter {
         .use(createTokenMiddleware(jwtService, this.logger));
     });
     this.server.of('/').use(createTokenMiddleware(jwtService, this.logger));
+    this.server.of('/agar').use(createTokenMiddleware(jwtService, this.logger));
     return this.server;
   }
 

@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { AppGateway } from './socket/socket.gateway';
 import { SocketModule } from './socket/socket.module';
 import { SocketService } from './socket/socket.service';
-import { SocketIOAdapter } from './socket/socket.adapter';
+import { AgarGateway } from './socket/agar.gateway';
 
 @Module({
   imports: [
@@ -22,6 +22,6 @@ import { SocketIOAdapter } from './socket/socket.adapter';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, AppGateway, SocketService],
+  providers: [AppService, AppGateway, SocketService, AgarGateway],
 })
 export class AppModule {}

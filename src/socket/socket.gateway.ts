@@ -6,13 +6,9 @@ import {
   OnGatewayDisconnect,
   WebSocketServer,
   SubscribeMessage,
-  MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AppService } from '../app.service';
 import ReturnResponse, { ReturnResponseType } from '../helper/returnResponse';
-import { NamespaceClass } from '../classes/Namespace';
-import { Room } from '../classes/Room';
 import { SocketWithAuth } from 'src/types&enums/types';
 import { MyNameSpaces } from './socket.namespaces';
 
@@ -22,7 +18,7 @@ export class AppGateway
 {
   private readonly logger = new Logger(AppGateway.name);
   private myNamespaces: MyNameSpaces;
-  constructor(private readonly appService: AppService) {
+  constructor() {
     this.myNamespaces = new MyNameSpaces();
   }
 
@@ -91,12 +87,12 @@ export class AppGateway
               socket.join(roomTitle);
               res(ReturnResponse(this.myNamespaces.getMyNameSpaces()));
               this.logger.debug(
-                `Client ${socket.username} joined room: ${roomTitle}`,
+                `Client ${socket.username} Disconnect room: ${roomTitle}`,
               );
             },
           );
           this.logger.debug(
-            `Client ${socket.username} joined namespace: ${namespace.endpoint}`,
+            `Client ${socket.username} Disconnect namespace: ${namespace.endpoint}`,
           );
         });
     });
@@ -110,7 +106,7 @@ export class AppGateway
       namespace: string;
       room: string;
       message: string;
-    }
+    },
   ) {
     const sockets = await this.server
       .of(payload.namespace)
@@ -124,15 +120,15 @@ export class AppGateway
       }
     });
 
-      this.myNamespaces.getMyNameSpaces().forEach((namespace) => {
-        if (namespace.endpoint === payload.namespace) {
-          namespace.rooms.forEach((room) => {
-            if (room.roomTitle === payload.room) {
-              room.addMessage(payload.message);
-            }
-          });
-        }
-      });
+    this.myNamespaces.getMyNameSpaces().forEach((namespace) => {
+      if (namespace.endpoint === payload.namespace) {
+        namespace.rooms.forEach((room) => {
+          if (room.roomTitle === payload.room) {
+            room.addMessage(payload.message);
+          }
+        });
+      }
+    });
     if (isInThisRoomAndNamespace) {
       this.server
         .of(payload.namespace)
